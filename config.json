@@ -1,0 +1,16 @@
+{
+  "datasources": [
+    {
+      "name": "db1",
+      "host": "localhost",
+      "port": 3306,
+      "database": "mydb",
+      "username": "root",
+      "password": "password",
+      "allowInsert": true,
+      "allowUpdate": true,
+      "allowDelete": false,
+      "allowDdl": false
+    }
+  ]
+}
