@@ -6,7 +6,7 @@ description: "Multi-datasource MySQL database operation tool that supports confi
 # MySQL Multi-Datasource Operation Tool
 
 This Skill provides flexible multi-datasource MySQL database operation capabilities, supporting configuration of multiple database connections with fine-grained control over DML operation permissions (INSERT/UPDATE/DELETE) and DDL operation permissions (CREATE/ALTER/DROP/TRUNCATE etc.).
-
+When using it, first check the `config.json` file in the same directory of the skill to understand the format and field meaning of the data source configuration.
 ## Features
 
 - **Multi-Datasource Support**: Configure multiple MySQL database connections
