@@ -155,18 +155,9 @@ class MySQLConnectionManager:
         """
         从SQL语句中提取表名
         支持: SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, TRUNCATE, JOIN等
+        注意：保留原始大小写，因为MySQL表名可能区分大小写
         """
-        sql_upper = sql.strip().upper()
         tables = set()
-
-        # SELECT ... FROM table_name [JOIN table_name]
-        # INSERT INTO table_name
-        # UPDATE table_name
-        # DELETE FROM table_name
-        # CREATE TABLE table_name
-        # ALTER TABLE table_name
-        # DROP TABLE table_name
-        # TRUNCATE TABLE table_name
 
         # 匹配 FROM 后面的表名 (包括 JOIN)
         from_pattern = r'\bFROM\s+(\w+)(?:\s+AS\s+\w+)?'
@@ -176,7 +167,7 @@ class MySQLConnectionManager:
         table_pattern = r'\bTABLE\s+(?:IF\s+EXISTS\s+)?(\w+)'
 
         for pattern in [from_pattern, join_pattern, into_pattern, update_pattern, table_pattern]:
-            matches = re.findall(pattern, sql_upper, re.IGNORECASE)
+            matches = re.findall(pattern, sql, re.IGNORECASE)
             tables.update(matches)
 
         return list(tables)
