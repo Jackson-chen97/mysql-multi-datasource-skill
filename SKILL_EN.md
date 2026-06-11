@@ -7,6 +7,19 @@ description: "Multi-datasource MySQL database operation tool that supports confi
 
 This Skill provides flexible multi-datasource MySQL database operation capabilities, supporting configuration of multiple database connections with fine-grained control over DML operation permissions (INSERT/UPDATE/DELETE) and DDL operation permissions (CREATE/ALTER/DROP/TRUNCATE etc.).
 When using it, first check the `config.json` file in the same directory of the skill to understand the format and field meaning of the data source configuration.
+
+### Environment Detection & Command Syntax
+
+**Must generate command format based on user's environment:**
+
+| Environment | Feature | Command Separator | Example |
+|-------------|---------|-------------------|--------|
+| PowerShell | User OS is Windows | Semicolon `;` | `cd ./scripts; python mysql_client.py -d db1 -s "SELECT 1"` |
+| CMD | User OS is Windows | `&&` or `&` | `cd ./scripts && python mysql_client.py -d db1 -s "SELECT 1"` |
+| Bash/Zsh | User OS is Linux/Mac | `&&` or `;` | `cd ./scripts && python mysql_client.py -d db1 -s "SELECT 1"` |
+
+**PowerShell MUST NOT use `&&` as command separator**, it will cause syntax errors.
+
 ## Features
 
 - **Multi-Datasource Support**: Configure multiple MySQL database connections

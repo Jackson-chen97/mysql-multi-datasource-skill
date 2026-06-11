@@ -7,6 +7,19 @@ description: "多数据源MySQL数据库操作工具，支持配置多个数据�
 
 本Skill提供灵活的多数据源MySQL数据库操作能力，支持配置多个数据库连接，并可细粒度控制DML操作权限（INSERT/UPDATE/DELETE）和DDL操作权限（CREATE/ALTER/DROP/TRUNCATE等）。
 使用时首先查看该skill的同级目录下的`config.json`文件，了解数据源配置的格式和字段含义。
+
+### 环境检测与命令语法
+
+**必须根据用户环境生成对应的命令格式：**
+
+| 环境 | 特征 | 命令分隔符 | 示例 |
+|------|------|-----------|------|
+| PowerShell | 用户OS为Windows | 分号 `;` | `cd ./scripts; python mysql_client.py -d db1 -s "SELECT 1"` |
+| CMD | 用户OS为Windows | `&&` 或 `&` | `cd ./scripts && python mysql_client.py -d db1 -s "SELECT 1"` |
+| Bash/Zsh | 用户OS为Linux/Mac | `&&` 或 `;` | `cd ./scripts && python mysql_client.py -d db1 -s "SELECT 1"` |
+
+**PowerShell严禁使用 `&&` 作为命令分隔符**，会导致语法错误。
+
 ## 功能特性
 
 - **多数据源支持**: 可配置多个MySQL数据库连接
