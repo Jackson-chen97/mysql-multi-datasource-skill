@@ -81,15 +81,15 @@ class MySQLConnectionManager:
                 ds = DataSourceConfig.from_dict(ds_config)
                 self.datasources[ds.name] = ds
 
-            print(f"✅ 已加载 {len(self.datasources)} 个数据源配置")
+            print(f"[OK] 已加载 {len(self.datasources)} 个数据源配置")
             for name in self.datasources.keys():
                 print(f"   - {name}")
 
         except FileNotFoundError:
-            print(f"❌ 配置文件不存在: {self.config_path}")
+            print(f"[ERROR] 配置文件不存在: {self.config_path}")
             sys.exit(1)
         except json.JSONDecodeError as e:
-            print(f"❌ 配置文件格式错误: {e}")
+            print(f"[ERROR] 配置文件格式错误: {e}")
             sys.exit(1)
 
     def _get_connection(self, datasource_name: str) -> pymysql.Connection:
@@ -294,7 +294,7 @@ class MySQLConnectionManager:
         for name, conn in self._connections.items():
             if conn and conn.open:
                 conn.close()
-                print(f"🔌 已关闭连接: {name}")
+                print(f"[CLOSED] 已关闭连接: {name}")
         self._connections.clear()
 
     def get_datasource_info(self, datasource_name: str) -> Optional[Dict]:
@@ -324,7 +324,7 @@ class MySQLConnectionManager:
 def print_query_results(results: List[Dict]):
     """打印查询结果"""
     if not results:
-        print("📭 查询结果为空")
+        print("[EMPTY] 查询结果为空")
         return
 
     # 获取所有列名
@@ -350,13 +350,13 @@ def print_query_results(results: List[Dict]):
         print(row_str)
 
     print(header_line)
-    print(f"📊 共 {len(results)} 条记录")
+    print(f"[INFO] 共 {len(results)} 条记录")
 
 
 def interactive_mode(manager: MySQLConnectionManager):
     """交互式模式"""
     print("\n" + "=" * 50)
-    print("🗄️  MySQL 多数据源客户端 - 交互式模式")
+    print("MySQL 多数据源客户端 - 交互式模式")
     print("=" * 50)
     print("命令:")
     print("  /use <数据源名>  - 切换数据源")
@@ -382,11 +382,11 @@ def interactive_mode(manager: MySQLConnectionManager):
                 cmd = parts[0].lower()
 
                 if cmd == '/exit':
-                    print("👋 再见！")
+                    print("再见！")
                     break
 
                 elif cmd == '/list':
-                    print("\n📋 可用数据源:")
+                    print("\n可用数据源:")
                     for name in manager.list_datasources():
                         ds_info = manager.get_datasource_info(name)
                         perms = []
@@ -404,42 +404,42 @@ def interactive_mode(manager: MySQLConnectionManager):
 
                 elif cmd == '/use':
                     if len(parts) < 2:
-                        print("❌ 用法: /use <数据源名>")
+                        print("[ERROR] 用法: /use <数据源名>")
                         continue
 
                     ds_name = parts[1]
                     if ds_name in manager.list_datasources():
                         current_datasource = ds_name
-                        print(f"✅ 已切换到数据源: {ds_name}")
+                        print(f"[OK] 已切换到数据源: {ds_name}")
                     else:
-                        print(f"❌ 数据源 '{ds_name}' 不存在")
+                        print(f"[ERROR] 数据源 '{ds_name}' 不存在")
 
                 elif cmd == '/info':
                     if not current_datasource:
-                        print("❌ 请先选择数据源")
+                        print("[ERROR] 请先选择数据源")
                         continue
 
                     info = manager.get_datasource_info(current_datasource)
-                    print(f"\n📊 数据源信息: {info['name']}")
+                    print(f"\n数据源信息: {info['name']}")
                     print(f"   主机: {info['host']}:{info['port']}")
                     print(f"   数据库: {info['database']}")
-                    print(f"   权限: INSERT={'✅' if info['permissions']['insert'] else '❌'} "
-                          f"UPDATE={'✅' if info['permissions']['update'] else '❌'} "
-                          f"DELETE={'✅' if info['permissions']['delete'] else '❌'} "
-                          f"DDL={'✅' if info['permissions']['ddl'] else '❌'}")
+                    print(f"   权限: INSERT={'[OK]' if info['permissions']['insert'] else '[NO]'} "
+                          f"UPDATE={'[OK]' if info['permissions']['update'] else '[NO]'} "
+                          f"DELETE={'[OK]' if info['permissions']['delete'] else '[NO]'} "
+                          f"DDL={'[OK]' if info['permissions']['ddl'] else '[NO]'}")
                     print()
 
                 else:
-                    print(f"❌ 未知命令: {cmd}")
+                    print(f"[ERROR] 未知命令: {cmd}")
 
             else:
                 # 执行SQL
                 if not current_datasource:
-                    print("❌ 请先使用 /use <数据源名> 选择数据源")
+                    print("[ERROR] 请先使用 /use <数据源名> 选择数据源")
                     continue
 
                 sql = user_input
-                print(f"🚀 执行SQL: {sql}")
+                print(f"执行SQL: {sql}")
 
                 try:
                     result = manager.execute_sql(current_datasource, sql)
@@ -448,22 +448,22 @@ def interactive_mode(manager: MySQLConnectionManager):
                         if result['type'] == 'query':
                             print_query_results(result['data'])
                         else:
-                            print(f"✅ 执行成功")
+                            print(f"执行成功")
                             print(f"   影响行数: {result['affected_rows']}")
                             if result['last_insert_id']:
                                 print(f"   自增ID: {result['last_insert_id']}")
                     else:
-                        print(f"❌ 执行失败: {result['message']}")
+                        print(f"执行失败: {result['message']}")
 
                 except PermissionError as e:
-                    print(f"🚫 权限错误: {e}")
+                    print(f"权限错误: {e}")
                 except TableNotFoundError as e:
-                    print(f"❌ 表不存在: {e}")
+                    print(f"表不存在: {e}")
                 except Exception as e:
-                    print(f"❌ 错误: {e}")
+                    print(f"错误: {e}")
 
         except KeyboardInterrupt:
-            print("\n👋 再见！")
+            print("\n再见！")
             break
         except EOFError:
             break
@@ -492,22 +492,22 @@ def main():
             interactive_mode(manager)
         elif args.sql and args.datasource:
             # 直接执行SQL
-            print(f"🚀 在数据源 '{args.datasource}' 上执行SQL: {args.sql}")
+            print(f"在数据源 '{args.datasource}' 上执行SQL: {args.sql}")
             result = manager.execute_sql(args.datasource, args.sql)
 
             if result['success']:
                 if result['type'] == 'query':
                     print_query_results(result['data'])
                 else:
-                    print(f"✅ 执行成功")
+                    print(f"执行成功")
                     print(f"   影响行数: {result['affected_rows']}")
                     if result['last_insert_id']:
                         print(f"   自增ID: {result['last_insert_id']}")
             else:
-                print(f"❌ 执行失败: {result['message']}")
+                print(f"执行失败: {result['message']}")
                 sys.exit(1)
         else:
-            print("❌ 请提供 --sql 和 --datasource 参数，或使用 --interactive 进入交互式模式")
+            print("请提供 --sql 和 --datasource 参数，或使用 --interactive 进入交互式模式")
             sys.exit(1)
 
     finally:
