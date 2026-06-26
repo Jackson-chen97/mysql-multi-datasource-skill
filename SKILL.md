@@ -20,6 +20,18 @@ description: "多数据源MySQL数据库操作工具，支持配置多个数据�
 
 **PowerShell严禁使用 `&&` 作为命令分隔符**，会导致语法错误。
 
+### UTF-8 编码设置
+
+**防止中文乱码，执行命令前需设置UTF-8环境变量：**
+
+| 环境 | 设置方式 | 示例 |
+|------|---------|------|
+| PowerShell | `$env:PYTHONIOENCODING="utf-8"` | `$env:PYTHONIOENCODING="utf-8"; cd ./scripts; python mysql_client.py -d db1 -s "SELECT * FROM users"` |
+| CMD | `set PYTHONIOENCODING=utf-8` | `set PYTHONIOENCODING=utf-8 && cd ./scripts && python mysql_client.py -d db1 -s "SELECT * FROM users"` |
+| Bash/Zsh | `export PYTHONIOENCODING=utf-8` | `export PYTHONIOENCODING=utf-8 && cd ./scripts && python mysql_client.py -d db1 -s "SELECT * FROM users"` |
+
+**Windows环境建议在命令开头添加UTF-8设置**，避免查询结果中文字段显示乱码。
+
 ## 功能特性
 
 - **多数据源支持**: 可配置多个MySQL数据库连接
